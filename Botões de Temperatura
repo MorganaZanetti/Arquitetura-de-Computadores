@@ -1,0 +1,100 @@
+	ORG 0000H
+	LJMP INICIO
+	ORG 0100H
+
+INICIO:
+	MOV P1, #10111111B ;Se o botão 0 não for pressionado
+	JNB P2.0, BOTAO_PRESSIONADO
+	JMP INICIO ;Retorna a função enquanto nenhum botão for pressionado
+
+
+BOTAO_PRESSIONADO:
+	JNB P2.0, LIGADO
+	JB P2.0, DESLIGADO
+	RET ;Retorna à função anterior
+
+
+LIGADO:
+	MOV P1, #11011111B ;Liga o LED verde
+	ACALL DELAY
+	JB P2.0, DESLIGADO
+	JNB P2.6 , COLOCA_CAPSULA
+	JMP LIGADO
+
+DESLIGADO:
+	MOV P1, #10111111B ;Liga o LED vermelho
+	JMP DESLIGADO
+
+
+DELAY: 
+NEXT:
+	MOV R5, #255
+AGAIN:
+	DJNZ R5, AGAIN
+	RET
+
+
+COLOCA_CAPSULA:
+	JNB P2.6, COLOCA_CAPSULO2;Se botão 6 for pressionado
+	JMP COLOCA_CAPSULA
+
+COLOCA_CAPSULO2:
+	MOV R0, #1
+	JMP CONFERE_AGUA
+
+CONFERE_AGUA:
+	JNB P2.7, AUMENTAR_AGUA
+	JMP CONFERE_AGUA
+
+AUMENTAR_AGUA:
+	INC R7
+	ACALL CONFERE_AGUA
+
+
+TEMPERATURA:
+	JNB P2.1, BOTAO_FRIO
+	JNB P2.2, BOTAO_MORNO
+	JNB P2.3, BOTAO_QUENTE
+	JMP TEMPERATURA ;Continua na função TEMPERATURA até pressionar algum botão
+	
+
+PREPARA_BEBIDA:
+	MOV P1, #01111111B ;Liga o LED amarelo
+	ACALL DELAY
+	MOV P1, #11011111B ;Liga o LED verde
+
+
+;BOTÃO PARA LIGAR E DESLIGAR A MÁQUINA
+BOTAO_LIGA_DESLIGA:
+	ACALL BOTAO_PRESSIONADO
+
+
+BOTAO_INTENSIDADE:
+;	JB P1.5
+;NÍVEIS DE INTENSIDADE:
+INTENSIDADEB_FRACO: ;Intensidade da bebida: fraco
+	;Decrementa mais água
+
+
+INTENSIDADEB_MEDIO: ;Intensidade da bebida: médio/normal
+	;Decrementa quantidade n de água
+
+INTENSIDADEB_FORTE: ;Intensidade da bebida: forte
+	;Decrementa mais água
+
+
+;BOTÕES DE TEMPERATURA
+BOTAO_FRIO:
+	MOV R1, #1
+	JB P2.1, PREPARA_BEBIDA ;Define o botão 1 como frio
+	JMP BOTAO_FRIO
+
+BOTAO_MORNO:
+	MOV R1, #2
+	JB P2.2, PREPARA_BEBIDA ;Define o botão 2 como morno
+	JMP BOTAO_MORNO
+
+BOTAO_QUENTE:
+	MOV R1, #3
+	JB P2.3, PREPARA_BEBIDA ;Define o botão 3 como quente
+	JMP BOTAO_QUENTE
