@@ -200,66 +200,66 @@ ESCADA2:
 
 ;FUNÇÕES PARA NÍVEL DE INTENSIDADE --------------------------------
 INTENSIDADE:
-	MOV R2, #0   ;O estado de intensidade inicial é dado como 0
+	MOV R2, #0
 	MOV R3, #4
 	ACALL DELAY
-	JB P2.2, INTENSIDADE_FRACO ;Se o botão 2 for pressionado, a intensidade da bebida será fraca
+	JB P2.2, INTENSIDADE_FRACO
 	JNB P2.4, ESCADA2
 	JMP INTENSIDADE
 	
 INTENSIDADE_FRACO:
-	MOV R2, #1 ;Nível de intensidade será dado como 1
+	MOV R2, #1
 	MOV R3, #4
 	ACALL DELAY
-	JNB P2.2, INTENSIDADE_MEDIO ;Se o botão 2 for pressionado, a intensidade da bebida aumentará para médio
+	JNB P2.2, INTENSIDADE_MEDIO
 	JNB P2.4, ESCADA2
 	JMP INTENSIDADE_FRACO
 	 
 INTENSIDADE_MEDIO: 
-	MOV R2, #2 ;Nível de intensidade será dado como 2
+	MOV R2, #2
 	MOV R3, #4
 	ACALL DELAY
-	JNB P2.2, INTENSIDADE_FORTE ;Se o botão 2 for solto, a intensidade da bebida aumentará para forte
+	JB P2.2, INTENSIDADE_FORTE
 	JNB P2.4, ESCADA2
 	JMP INTENSIDADE_MEDIO
 
 INTENSIDADE_FORTE:
-	MOV R2, #3  ;Nível de intensidade será dado como 3
+	MOV R2, #3
 	MOV R3, #4
 	ACALL DELAY
-	JNB P2.2, INTENSIDADE ;Se o botão for pressionado novamente, o nível de intensidade reiniciará
+	JNB P2.2, INTENSIDADE
 	JNB P2.4, ESCADA2
 	JMP INTENSIDADE_FORTE
 
 
 ;BOTÕES DE TEMPERATURA -------------------------------------------
 TEMPERATURA:
-	MOV R4, #0  ;O estado de temperatura inicial é dado como 0
+	MOV R4, #0
 	MOV R3, #4
 	ACALL DELAY
-	JB P2.1, TEMPERATURA_FRIO  ;Se o botão 1 for pressionado, a bebida será fria
+	JB P2.1, TEMPERATURA_FRIO
 	JNB P2.4, ESCADA2 
 	JMP TEMPERATURA ;Continua na função TEMPERATURA até pressionar algum botão
  
 TEMPERATURA_FRIO:
-	MOV R4, #1 ;Nível de temperatura será dado como 1
+	MOV R4, #1
 	MOV R3, #4
 	ACALL DELAY
-	JNB P2.1, TEMPERATURA_MORNO  ;Se o botão 1 for pressionado novamente, a bebida será morna
+	JNB P2.1, TEMPERATURA_MORNO
 	JNB P2.4, ESCADA2
 	JMP TEMPERATURA_FRIO
 
 TEMPERATURA_MORNO:
-	MOV R4, #2  ;Nível de temperatura será dado como 2
+	MOV R4, #2
 	MOV R3, #4
 	ACALL DELAY
-	JNB P2.1, TEMPERATURA_QUENTE  ;Se o botão 1 for pressionado novamente, a bebida será quente
+	JB P2.1, TEMPERATURA_QUENTE
 	JNB P2.4, ESCADA2
 	JMP TEMPERATURA_MORNO
 
 TEMPERATURA_QUENTE:
-	MOV R4, #3  ;Nível de temperatura será dado como 3
-	MOV R3, #4  
+	MOV R4, #3
+	MOV R3, #4
 	ACALL DELAY
 	JNB P2.1, TEMPERATURA
 	JNB P2.4, ESCADA2 
