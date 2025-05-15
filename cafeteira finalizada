@@ -1,0 +1,338 @@
+; ------------ PROJETO: CAFETEIRA CASEIRA -------------
+; Desenvolvedor:
+; ------------ MORGANA RODRIGUES ZANETTI --------------
+; R.A.:
+; ------------ 24.223.010-0 ---------------------------
+
+; Obs: 
+; ------------ Frequência Indicada -> 350 -------------
+
+; +Informações:
+	; CURSO: Ciência da Computação
+	; MATÉRIA: Arquitetura de Computadores
+	; PERÍODO: 4° semestre
+
+;Código:
+; Botão de temperatura -> 1 
+; Botão de intensidade -> 2
+; Botão para sair da sub-rotina -> 4 
+; Botão para preparo da bebida -> 4 
+; Botão para copo -> 5
+; Botão para cápsula -> 6
+; Botão para água -> 7
+
+; R0 -> delay
+; R1 -> timer de preparo da bebida
+; R2 -> intensidade da bebida
+; R3 -> sair da sub-rotina 
+; R4 -> temperatura da bebida
+; R5 -> colocar copo
+; R6 -> colocar cápsula
+; R7 -> colocar água
+
+; Obs2:
+; A função 'ESCADA' foi construida com o intuito de evitar o erro de distância entre funções (error: 'OUT OF RANGE')
+; Obs3:
+; O botão 4 foi reaproveitado e ao mesmo tempo que é responsável tanto por sair da rotina, como também inicia o preparo da bebida.
+
+	ORG 0000H
+	LJMP INICIO
+	ORG 0100H
+
+INICIO:
+	MOV P1, #10111111B ;Liga o LED vermelho, indicando que a máquina está desligada
+	JNB P2.0, BOTAO_PRESSIONADO ;Se o botão 0 for pressionado, a função 'BOTAO_PRESSIONADO' será chamado
+	JMP INICIO ;Retorna a função enquanto nenhum botão for pressionado
+
+
+VOLTAR_LIGADO:
+	MOV R3, #4
+	ACALL DELAY
+	JNB P2.7, $ ;Espera soltar o botão 7 para ir para a próxima linha do código
+   	JNB P2.6, $ ;Espera soltar o botão 6 para ir para a próxima linha do código
+   	JNB P2.5, $ ;Espera soltar o botão 5 para ir para a próxima linha do código
+    	JNB P2.4, $ ;Espera soltar o botão 4 para ir para a próxima linha do código
+    	JNB P2.2, $ ;Espera soltar o botão 3 para ir para a próxima linha do código
+    	JNB P2.1, $ ;Espera soltar o botão 2 para ir para a próxima linha do código
+    	JMP LIGADO ;Retorna para a função 'LIGADO'
+
+BOTAO_PRESSIONADO:
+	JNB P2.0, LIGADO ;Se o botão 0 for pressionado, a máquina irá ligar
+	JB P2.0, DESLIGADO ;Se o botão 0 NÃO for pressionado, a cafeteira continuará desligada
+	RET ;Retorna à função anterior
+
+;FUNÇÕES PARA LIGAR E DELIGAR A MÁQUINA -------------------------------
+DESLIGADO:
+	MOV P1, #10111111B ;Liga o LED vermelho
+	MOV R6, #0 ;Reseta o R6 (retorna o R6 como 0)
+	MOV R5, #0 ;Reseta o R5 (retorna o R5 como 0)
+	MOV R7, #0 ;Reseta o R7 (retorna o R7 como 0)
+	MOV R4, #0 ;Reseta o R4 (retorna o R4 como 0)
+	MOV R2, #0 ;Reseta o R2 (retorna o R2 como 0)
+	JMP INICIO ;Volta para o inicio
+
+;INICIA O PREPARO DA BEBIDA
+INICIAR:
+	JNB P2.4, PREPARA_BEBIDA ;Inicia a função de preparar a bebida ao apertar o botão 4
+	JMP INICIAR
+
+;DEFININDO O DELAY: ---------------------------------------------------
+DELAY: 
+NEXT:
+	DJNZ R3, NEXT
+	MOV R0, #255
+AGAIN:
+	DJNZ R0, AGAIN
+	RET
+
+
+;FUNÇÕES PARA COLOCAR E CONFERIR CÁPSULA ------------------------------
+COLOCA_CAPSULA:
+	JNB P2.6, COLOCA_CAPSULO2 ;Se botão 6 for pressionado, a função 'COLOCA_CAPSULO2' é chamada
+	JMP COLOCA_CAPSULA ;Continua na função enquanto nenhum botão por pressionado
+
+COLOCA_CAPSULO2:
+	MOV R6, #1 ;Coloca cápsula na máquina (Move o valor 1 para o R6)
+	JMP LIGADO ;Continua na função enquanto nenhum botão por pressionado
+
+
+;COLOCA COPO NA MÁQUINA ------------------------------------
+COLOCA_COPO:
+	JNB P2.5, COLOCA_COPO2 ;Move para a função 'COLOCA_COPO2' ao apertar o botão 5
+	JMP COLOCA_COPO
+
+COLOCA_COPO2:
+	MOV R5,#1 ;Coloca o valor 1 no R5
+	JMP CONFERE_COPO ;Confere se há copo na máquina
+
+CONFERE_COPO:
+	MOV A, R5 ;Move o valor de R5 para A
+	JNZ LIGADO
+	JMP CONFERE_COPO
+
+
+;COLOCA ÁGUA NA MÁQUINA -------------------------------------------
+AUMENTAR_AGUA:
+	MOV R3, #4
+	ACALL DELAY ;Chama o delay
+	INC R7 ;Incrementa 1 no R7, indicando água
+	ACALL LIMITE_AGUA
+	CLR A 
+	JMP VOLTAR_LIGADO
+	
+LIMITE_AGUA:
+    CJNE R7, #4, VOLTAR_LIGADO  ;Define o limite da água como 3 (Se o botão para incrementar água foi pressionado pela 4° vez, o nível de água voltará para 0)
+    MOV R7, #0             
+    RET
+
+ESCADA1:
+	JMP VOLTAR_LIGADO
+
+;FUNÇÃO PARA PREPARAR A BEBIDA ----------------------------------------
+PREPARA_BEBIDA:
+	ACALL LIGA_SERIAL ;Chama a função serial
+	ACALL VERIFICAR ;Verifica se não está faltando nada na máquina para preparar o café 
+	MOV P1, #01111111B ;Liga o LED amarelo para indicar que a bebida está sendo preparada
+	MOV R3, #4
+	ACALL DELAY
+	ACALL SERIAL_PREPARA_BEBIDA ;Escreve no monitor serial 'PREPARANDO'
+	MOV R1, #100 ;Define o tempo de espera
+	JMP ESPERA
+
+ESPERA:
+	MOV R3, #4
+	ACALL DELAY
+	DJNZ R1, ESPERA
+	MOV R3, #4
+	ACALL DELAY
+	JMP BEBIDA_PRONTA
+
+BEBIDA_PRONTA:
+	MOV P1, #11011111B ;Liga o LED verde
+	MOV R3, #4
+	ACALL DELAY
+	ACALL SERIAL_BEBIDA_PRONTA
+	JMP VOLTAR_LIGADO
+
+;BOTÃO PARA LIGAR E DESLIGAR A MÁQUINA
+BOTAO_LIGA_DESLIGA:
+	ACALL BOTAO_PRESSIONADO
+
+LIGADO:
+	MOV P1, #11011111B ;Liga o LED verde
+	MOV R3, #4
+	ACALL DELAY
+	JB P2.0, DESLIGADO
+	JNB P2.7, AUMENTAR_AGUA
+	JNB P2.6 , COLOCA_CAPSULA
+	JNB P2.5, COLOCA_COPO
+	JNB P2.2, INTENSIDADE
+	JNB P2.1, TEMPERATURA
+	JNB P2.4, INICIAR
+	JMP LIGADO
+SERIAL_ERRO:
+	MOV A, #'E'
+	ACALL LB
+ 	MOV A, #'R'
+	ACALL LB
+	MOV A, #'R'
+	ACALL LB
+ 	MOV A, #'O'
+	ACALL LB
+	JMP ESCADA1
+
+;FUNÇÃO PARA VERIFICAR SE TODOS OS ITENS NECESSÁRIOS PARA INICIAR O PREPARO DA BEBIDA FORAM COLOCADOS NA CAFETEIRA -----------------
+VERIFICAR: 
+	MOV A, R7
+	JZ SERIAL_ERRO
+	MOV A, R6
+	JZ SERIAL_ERRO
+	MOV A, R5
+	JZ SERIAL_ERRO
+	MOV A, R4
+	JZ SERIAL_ERRO
+	MOV A, R2
+	JZ SERIAL_ERRO
+	RET
+
+ESCADA2:
+	JMP ESCADA1
+
+;FUNÇÕES PARA NÍVEL DE INTENSIDADE --------------------------------
+INTENSIDADE:
+	MOV R2, #0   ;O estado de intensidade inicial é dado como 0
+	MOV R3, #4
+	ACALL DELAY
+	JB P2.2, INTENSIDADE_FRACO ;Se o botão 2 for pressionado, a intensidade da bebida será fraca
+	JNB P2.4, ESCADA2
+	JMP INTENSIDADE
+	
+INTENSIDADE_FRACO:
+	MOV R2, #1 ;Nível de intensidade será dado como 1
+	MOV R3, #4
+	ACALL DELAY
+	JNB P2.2, INTENSIDADE_MEDIO ;Se o botão 2 for pressionado, a intensidade da bebida aumentará para médio
+	JNB P2.4, ESCADA2
+	JMP INTENSIDADE_FRACO
+	 
+INTENSIDADE_MEDIO: 
+	MOV R2, #2 ;Nível de intensidade será dado como 2
+	MOV R3, #4
+	ACALL DELAY
+	JNB P2.2, INTENSIDADE_FORTE ;Se o botão 2 for solto, a intensidade da bebida aumentará para forte
+	JNB P2.4, ESCADA2
+	JMP INTENSIDADE_MEDIO
+
+INTENSIDADE_FORTE:
+	MOV R2, #3  ;Nível de intensidade será dado como 3
+	MOV R3, #4
+	ACALL DELAY
+	JNB P2.2, INTENSIDADE ;Se o botão for pressionado novamente, o nível de intensidade reiniciará
+	JNB P2.4, ESCADA2
+	JMP INTENSIDADE_FORTE
+
+
+;BOTÕES DE TEMPERATURA -------------------------------------------
+TEMPERATURA:
+	MOV R4, #0  ;O estado de temperatura inicial é dado como 0
+	MOV R3, #4
+	ACALL DELAY
+	JB P2.1, TEMPERATURA_FRIO  ;Se o botão 1 for pressionado, a bebida será fria
+	JNB P2.4, ESCADA2 
+	JMP TEMPERATURA ;Continua na função TEMPERATURA até pressionar algum botão
+ 
+TEMPERATURA_FRIO:
+	MOV R4, #1 ;Nível de temperatura será dado como 1
+	MOV R3, #4
+	ACALL DELAY
+	JNB P2.1, TEMPERATURA_MORNO  ;Se o botão 1 for pressionado novamente, a bebida será morna
+	JNB P2.4, ESCADA2
+	JMP TEMPERATURA_FRIO
+
+TEMPERATURA_MORNO:
+	MOV R4, #2  ;Nível de temperatura será dado como 2
+	MOV R3, #4
+	ACALL DELAY
+	JNB P2.1, TEMPERATURA_QUENTE  ;Se o botão 1 for pressionado novamente, a bebida será quente
+	JNB P2.4, ESCADA2
+	JMP TEMPERATURA_MORNO
+
+TEMPERATURA_QUENTE:
+	MOV R4, #3  ;Nível de temperatura será dado como 3
+	MOV R3, #4  
+	ACALL DELAY
+	JNB P2.1, TEMPERATURA
+	JNB P2.4, ESCADA2 
+	JMP TEMPERATURA_QUENTE
+
+
+;LIGANDO O MONITOR SERIAL --------------------------	
+LIGA_SERIAL:
+    MOV SCON, #40h 
+    MOV PCON, #80h
+    MOV TMOD, #20h 
+    MOV TH1, #243 
+    MOV TL1, #243
+    SETB TR1 
+LB:
+    MOV SBUF, A
+LB1:
+    JNB TI, LB1
+    CLR TI 
+    RET
+
+SERIAL_PREPARA_BEBIDA: ;Mensagem para sinalizar que a bebida está sendo preparada
+	MOV A, #'P'
+	ACALL LB
+ 	MOV A, #'R'
+	ACALL LB
+	MOV A, #'E'
+	ACALL LB
+	MOV A, #'P'
+	ACALL LB
+	MOV A, #'A'
+	ACALL LB
+	MOV A, #'R'
+	ACALL LB
+	MOV A, #'A'
+	ACALL LB
+	MOV A, #'N'
+	ACALL LB
+	MOV A, #'D'
+	ACALL LB
+	MOV A, #'O'
+	ACALL LB
+	RET
+
+SERIAL_BEBIDA_PRONTA: ;Mensagem para sinalizar que a bebida está pronta
+	MOV A, #'B'
+	ACALL LB
+ 	MOV A, #'E'
+	ACALL LB
+	MOV A, #'B'
+	ACALL LB
+ 	MOV A, #'I'
+	ACALL LB
+	MOV A, #'D'
+	ACALL LB
+ 	MOV A, #'A'
+	ACALL LB
+	
+	MOV A, #'-'
+	ACALL LB
+
+	MOV A, #'P'
+	ACALL LB
+ 	MOV A, #'R'
+	ACALL LB
+	MOV A, #'O'
+	ACALL LB
+	MOV A, #'N'
+	ACALL LB
+	MOV A, #'T'
+	ACALL LB
+	MOV A, #'A'
+	ACALL LB
+	MOV A, #'!'
+	ACALL LB
+	RET
