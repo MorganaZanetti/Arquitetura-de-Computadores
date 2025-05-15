@@ -13,7 +13,7 @@ O projeto visa simular uma cafeteira caseira (modelo de cápsulas), utilizando a
 Durante o desenvolvimento do projeto, foram utilizadas 3 periféricos disponíveis no simulador, sendo eles:
   - Monitor serial
   - 3 LEDs
-  - 7 dos 8 botões disponíveis  
+  - 7 dos 8 botões disponíveis 
 
 **Botões Utilizados:**
 | Botão | Função | 
@@ -47,10 +47,10 @@ Ao iniciar o programa, o LED vermelho será aceso, indicando que a cafeteira est
 Enquanto faltar algum dos itens acima, a bebida não será preparada. E, quando todos os itens estiverem presentes, o usuário poderá definir:
 	- Intensidade da bebida: fraco, médio ou forte
  	- Temperatura da bebida: frio, morno ou quente
-Com todas as opções definidas, o preparo pode ser iniciado pressionando novamente o botão 4. Durante o preparo, o LED amarelo será aceso e a mensagem 'Preparando' será exibida no monitor serial. Após concluir o preparo, o LED verde acenderá e a mensagem "Bebida pronta" será exibida no monitor serial
+Com todas as opções definidas, o preparo pode ser iniciado pressionando novamente o botão 4. Durante o preparo, o LED amarelo será aceso e a mensagem 'Preparando' será exibida no monitor serial. Após concluir o preparo, o LED verde acenderá e a mensagem "Bebida pronta" será exibida no monitor serial.
 
 **Observações:**  
  - O botão 4 foi reaproveitado e está sendo utlizado tanto para sair da sub-rotina quanto para iniciar o preparo da bebida. Modo de funcionamento:
-		- configure a temperatura → pressione 4 para sair.
-		- configure a intensidade → pressione 4 novamente para iniciar o preparo.
+		- configure a temperatura → pressione 4 para sair
+		- configure a intensidade → pressione 4 novamente para iniciar o preparo
  - A frequência indicada para a simulação no EdSim51 é 350 Hz
