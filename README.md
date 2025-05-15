@@ -1,7 +1,7 @@
 # Arquitetura-de-Computadores (CE4411) - Projeto Máquina de Café Caseira
 
-<p align="justify">
 #### Este repositório serve como template para o desenvolvimento do projeto da disciplina de Arquitetura de Computadores (CE4411) do Centro Universitário FEI.
+<p align="justify">
 
 **Desenvolvedor:** Morgana Rodrigues Zanetti - R.A.: 24.223.010-0
 ---
