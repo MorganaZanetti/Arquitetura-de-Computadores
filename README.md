@@ -56,3 +56,54 @@ Com todas as opções definidas, o preparo pode ser iniciado pressionando novame
 		- configure a intensidade → pressione 4 novamente para iniciar o preparo
  - A frequência indicada para a simulação no EdSim51 é 350 Hz
 </p>
+
+---
+## **Resultados:**  
+<p align="center">
+Cafeteira Desligada
+</p>
+
+![](https://github.com/user-attachments/assets/e9e0c189-d838-48b9-8cc2-a65a36f1a321)
+
+<p align="center">
+Cafeteira Ligada
+</p>
+
+![](https://github.com/user-attachments/assets/7b6238aa-eb83-45e5-91e7-2bafdcf7252e)
+
+
+<p align="center">
+Mensagem de Erroo
+</p>
+
+![erro](https://github.com/user-attachments/assets/d098b654-136f-4862-85ee-c0858b428c41)
+
+
+<p align="center">
+Incrementando os Registradores
+</p>
+
+![](https://github.com/user-attachments/assets/175073c1-a723-4eb3-8a4b-b4d69bbeaf0d)
+
+
+<p align="center">
+Preparando Bebida
+</p>
+
+![](https://github.com/user-attachments/assets/2fa5b5c3-fea6-4036-8916-beba28a39cdb)
+
+
+<p align="center">
+Bebida Pronta
+</p>
+
+![](https://github.com/user-attachments/assets/90b6ebc9-e331-4d3d-956b-5aaa9aca02ba)
+
+
+<p align="center">
+Reiniciando Cafeteira
+</p>
+
+![](https://github.com/user-attachments/assets/4102f724-e67f-4307-ad28-c3a6aa177be4)
+
+![reiniciando-cafeteira(2)](https://github.com/user-attachments/assets/02ea0307-d4b6-4b11-ac49-78926d3d7812)
