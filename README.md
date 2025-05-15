@@ -1,5 +1,6 @@
 # Arquitetura-de-Computadores (CE4411) - Projeto Máquina de Café Caseira
 
+<p align="justify">
 #### Este repositório serve como template para o desenvolvimento do projeto da disciplina de Arquitetura de Computadores (CE4411) do Centro Universitário FEI.
 
 **Desenvolvedor:** Morgana Rodrigues Zanetti - R.A.: 24.223.010-0
@@ -54,3 +55,4 @@ Com todas as opções definidas, o preparo pode ser iniciado pressionando novame
 		- configure a temperatura → pressione 4 para sair
 		- configure a intensidade → pressione 4 novamente para iniciar o preparo
  - A frequência indicada para a simulação no EdSim51 é 350 Hz
+</p>
